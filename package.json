@@ -1,0 +1,25 @@
+{
+  "name": "visio-dsl-generator",
+  "version": "0.1.0",
+  "description": "DSL → Visio (.vsdx) generator for software architecture diagrams",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/api/server.ts",
+    "start": "npm run build && node dist/api/server.js",
+    "test:vsdx": "tsx src/generator/test-generation.ts",
+    "test:parse": "tsx src/parser/test-parser.ts"
+  },
+  "dependencies": {
+    "chevrotain": "^11.0.3",
+    "elkjs": "^0.9.3",
+    "fastify": "^4.28.1",
+    "@fastify/cors": "^9.0.1",
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.0"
+  }
+}
