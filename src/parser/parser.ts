@@ -165,9 +165,10 @@ class DslToAstVisitor extends BaseVisitor {
     const label = ctx.StringLiteral
       ? stripQuotes(ctx.StringLiteral[0].image)
       : id;
-    const props: { tech?: string; description?: string } = ctx.nodeBody
-      ? this.visit(ctx.nodeBody)
-      : {};
+    const props: { tech?: string; description?: string } = {};
+    if (ctx.nodeBody) {
+      this.visit(ctx.nodeBody, props);
+    }
     this.nodes.push({ id, kind, label, ...props });
   }
 
@@ -181,23 +182,18 @@ class DslToAstVisitor extends BaseVisitor {
     throw new Error('nodeKind inconnu');
   }
 
-  nodeBody(ctx: any): { tech?: string; description?: string } {
-    const props: { tech?: string; description?: string } = {};
+  nodeBody(ctx: any, props: { tech?: string; description?: string }): void {
     if (ctx.property) {
       for (const p of ctx.property) {
-        const visited = this.visit(p) as { key: string; value: string };
-        if (visited.key === 'tech') props.tech = visited.value;
-        else if (visited.key === 'description') props.description = visited.value;
+        this.visit(p, props);
       }
     }
-    return props;
   }
 
-  property(ctx: any): { key: string; value: string } {
+  property(ctx: any, props: { tech?: string; description?: string }): void {
     const value = stripQuotes(ctx.StringLiteral[0].image);
-    if (ctx.Tech) return { key: 'tech', value };
-    if (ctx.Description) return { key: 'description', value };
-    return { key: '', value };
+    if (ctx.Tech) props.tech = value;
+    else if (ctx.Description) props.description = value;
   }
 
   groupDecl(ctx: any): void {
